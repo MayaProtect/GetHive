@@ -1,10 +1,11 @@
 
- 
 import pymongo
 import flask
 import json
+import bson
+from uuid import UUID, uuid4
 from flask_cors import CORS, cross_origin
-import os
+from os import environ as env
 
 
 app = flask.Flask(__name__)
@@ -16,24 +17,32 @@ app.config["DEBUG"] = True
 
 
 def get_collection():
-    my_client = pymongo.MongoClient('mongodb://' + os.environ["MONGO_HOST"] + ':' + os.environ["MONGO_PORT"] + '/')
-    db = my_client.list_database_names()
-    hive = db.hive
+    #my_client = pymongo.MongoClient('mongodb://' + os.environ["MONGO_HOST"] + ':' + os.environ["MONGO_PORT"] + '/')
+    my_client = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
+    db = my_client['mayaprotect']
+    hive = db['hives']
     return hive
 
 
-@app.route('/hive', methods=['GET'])  
+@app.route('/hive/<hive_id>', methods=['GET'])  
 @cross_origin() 
 # 打印所有蜂巢信息
-def page_query():
+def page_query(hive_id):
     args = flask.request.args
-    hive_id = args.get("id")
-    station_id = args.get("stationId")
+    #hive_id = args.get("uuid")
+    hive_id = bson.Binary.from_uuid(UUID(hive_id))
+    #station_id = args.get("stationId")
     
     coll = get_collection()
-    page_hive = coll.find(hive_id)
+   # page_hive = coll.find()
+    page_hive = coll.find_one({'uuid': hive_id})
+    print(page_hive)
+    rep = {
+        'uuid': str(UUID(bytes=page_hive['uuid']))
+    }
     
-    return flask.Response(json.dumps(page_hive), mimetype='application/json')
+    
+    return flask.Response(json.dumps(rep), mimetype='application/json')
 
 
 
