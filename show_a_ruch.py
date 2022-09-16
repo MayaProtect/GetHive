@@ -17,8 +17,8 @@ app.config["DEBUG"] = True
 
 
 def get_collection():
-    #my_client = pymongo.MongoClient('mongodb://' + os.environ["MONGO_HOST"] + ':' + os.environ["MONGO_PORT"] + '/')
-    my_client = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
+    my_client = pymongo.MongoClient('mongodb://' + env.get('MONGO_HOST') + ':' + env.get('MONGO_PORT') + '/')
+    #my_client = pymongo.MongoClient('mongodb://127.0.0.1:27017/')
     db = my_client['mayaprotect']
     hive = db['hives']
     return hive
