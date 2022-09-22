@@ -1,10 +1,10 @@
 import pymongo
 import flask
-#from app.response_creator import ResponseCreator
 import bson
 import json
 from uuid import UUID
 from flask_cors import CORS, cross_origin
+from hive import Hive 
 
 
 class GetHive:
@@ -16,7 +16,7 @@ class GetHive:
         self.db = self.my_client[params['mongo_db']]
         self.default_limit = params['default_limit']
         # Register routes
-        #!!!?????????????
+        #
         self.app.add_url_rule('/hive/<hive_id>', 'get_a_hive', self.get_a_hive, methods=['GET'])
         # Set CORS
         self.app.config['CORS_HEADERS'] = 'Content-Type'
@@ -35,9 +35,8 @@ class GetHive:
 
         page_hive = coll.find_one({'uuid': hive_id})
         print(page_hive)
-        rep = {
-            'uuid': str(UUID(bytes=page_hive['uuid']))
-        }
+        hive= Hive(page_hive)
+        rep = hive.__to_json__()
         
         return flask.Response(json.dumps(rep), mimetype='application/json')
         
