@@ -1,10 +1,10 @@
 import pymongo
 import flask
-import bson
+from bson.binary import Binary
 import json
 from uuid import UUID
 from flask_cors import CORS, cross_origin
-from hive import Hive 
+from app.hive import Hive
 
 
 class GetHive:
@@ -14,7 +14,6 @@ class GetHive:
         CORS(self.app)
         self.my_client = pymongo.MongoClient("mongodb://" + params['mongo_host'] + ":" + params['mongo_port'] + "/")
         self.db = self.my_client[params['mongo_db']]
-        self.default_limit = params['default_limit']
         # Register routes
         #
         self.app.add_url_rule('/hive/<hive_id>', 'get_a_hive', self.get_a_hive, methods=['GET'])
@@ -22,18 +21,20 @@ class GetHive:
         self.app.config['CORS_HEADERS'] = 'Content-Type'
 
     @cross_origin()
-    def get_a_hive(self) -> flask.Response:
+    def get_a_hive(self, hive_id) -> flask.Response:
         """
         Get a hive from DB and return it
         :return: Flask response
         """
-        args = flask.request.args
-        
-        #!!!!!!!!!!!!!!!!!!!!!!
-        hive_id = bson.Binary.from_uuid(UUID(hive_id))
+        try:
+            hive_id = UUID(hive_id)
+        except ValueError:
+            return flask.Response(status=400)
         coll = self.__get_collection()
 
-        page_hive = coll.find_one({'uuid': hive_id})
+        page_hive = coll.find_one({'uuid': Binary.from_uuid(hive_id)})
+        if page_hive is None:
+            return flask.Response(status=404)
         print(page_hive)
         hive= Hive(page_hive)
         rep = hive.__to_json__()
