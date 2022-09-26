@@ -8,7 +8,8 @@ RUN pip install -r requirements.txt
 
 ENV MONGO_HOST=localhost
 ENV MONGO_PORT=27017
+ENV MONGO_DB=mayaprotect
 
 EXPOSE 8080
 
-CMD python show_a_ruch.py
+CMD python run.py
