@@ -35,7 +35,6 @@ class GetHive:
         page_hive = coll.find_one({'uuid': Binary.from_uuid(hive_id)})
         if page_hive is None:
             return flask.Response(status=404)
-        print(page_hive)
         hive= Hive(page_hive)
         rep = hive.__to_json__()
         
