@@ -5,17 +5,16 @@ from uuid import UUID
 
 class Event:
     def __init__(self, event):
-        event = event[0]
         if event['uuid'] is None:
             raise ValueError("The event must have an uuid")
 
         if type(event['uuid']) is not bytes and type(event['uuid']) is not Binary:
             raise TypeError("The event uuid must be a UUID")
 
-        if event['eventType'] is None:
+        if event['event_type'] is None:
             raise ValueError("The event must have an event_type")
 
-        if type(event['eventType']) is not str:
+        if type(event['event_type']) is not str:
             raise TypeError("The event event_type must be a string")
 
         if event['createdAt'] is None:
@@ -24,7 +23,7 @@ class Event:
         if type(event['createdAt']) is not str:
             raise TypeError("The event created_at must be a string")
 
-        if event['owner'] is None:
+        if event['creator'] is None:
             raise ValueError("The event must have a creator")
 
         if event['description'] is None:
@@ -32,9 +31,9 @@ class Event:
 
         self.id = UUID(bytes=event['uuid'])
         self.description = event['description']
-        self.event_type = event['eventType']
+        self.event_type = event['event_type']
         self.createdAt = event['createdAt']
-        self.creator = Owner(event['owner'])
+        self.creator = Owner(event['creator'])
 
     def __to_json__(self):
         """
