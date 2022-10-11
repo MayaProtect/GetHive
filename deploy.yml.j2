@@ -16,6 +16,13 @@ spec:
       containers:
         - name: gethive
           image: pfontaine/gethive:{{ commit_sha }}
+          env:
+            - name: MONGO_HOST
+              value: mongodevel
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DB
+              value: mayaprotect
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
