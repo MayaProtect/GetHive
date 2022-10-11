@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: gethive
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
@@ -18,7 +18,7 @@ spec:
           image: pfontaine/gethive:{{ commit_sha }}
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
 
 ---
 
@@ -31,6 +31,6 @@ spec:
   selector:
     app: gethive
   ports:
-  - port: 80
-    targetPort: 80
+  - port: 8080
+    targetPort: 8080
   type: ClusterIP
